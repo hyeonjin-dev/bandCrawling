@@ -7,9 +7,9 @@ admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://mlb-management-default-rtdb.firebaseio.com"
 });
-
-const db = admin.database();
-
+const db = admin.database()
+;
+/*
 (async () => {
   try{
     const browser = await puppeteer.launch({
@@ -21,6 +21,7 @@ const db = admin.database();
     // 네이버 밴드 사이트 로그인 페이지로 이동
     await page.goto(loginPage);
     console.log('Navigated to login page.');
+
 
     // 로그인 처리
     await page.waitForNavigation();
@@ -36,6 +37,12 @@ const db = admin.database();
     ]);
     console.log('Navigated to calendar page.');
 
+    //이번달 확인
+    const date = new Date()
+    const month = date.getMonth() + 1
+
+    //월간 반복
+    for(month; month >= 1; month--){
     await page.waitForSelector('#content > section > div.scheduleList.gContentCardShadow > ul > li > span > a');
     const modals = await page.evaluate(() => {
       const anchors = Array.from(document.querySelectorAll('#content > section > div.scheduleList.gContentCardShadow > ul > li'));
@@ -72,13 +79,40 @@ const db = admin.database();
     }
 
     // 파이어베이스에 결과를 저장
-    const ref = db.ref('bandschedule');
+    const ref = db.ref(`bandschedule/${month}month`);
     await ref.set(participants);
-    console.log('Data saved to Firebase.');
-    await browser.close();
-    console.log('Browser closed.');
+    console.log(`Data for schedule_${month} saved to Firebase.`);
+    participants = []; // 다음 일정을 위해 참가자 배열 초기화
+    await page.click(`#content > section > div.calendarViewWrap.gContentCardShadow > div:nth-child(1) > div.calendarHeader > div.month > button.prev._btnPrev`);
+    }
     } catch (error) {
       console.error('An error occurred:', error);
   }
   
 })()
+*/
+
+//데이터 가공
+const processFirebaseData = async() => {
+  try {
+      // Firebase에서 데이터 가져오기
+      const bandschedule = await db.ref('bandschedule').get();
+      const memberList = await db.ref('memberList').get();
+      const scheduleData = bandschedule.val();
+      const memberListData = memberList.val();
+
+      // 데이터 가공 및 수정 작업
+      console.log(scheduleData)
+      console.log(memberListData)
+
+      // 수정된 데이터를 Firebase에 다시 저장
+      await db.ref('bandschedule').set(scheduleData);
+      await db.ref('memberList').set(memberListData);
+      console.log('Data processed and updated in Firebase.');
+  } catch (error) {
+      console.error('An error occurred:', error);
+  }
+}
+
+// 실행
+processFirebaseData();
