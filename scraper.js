@@ -87,7 +87,7 @@ const db = admin.database()
     } catch (error) {
       console.error('An error occurred:', error);
   }
-  
+  await processFirebaseData()
 })()
 
 //데이터 가공
@@ -145,4 +145,4 @@ const processFirebaseData = async() => {
 }
 
 // 실행
-processFirebaseData()
+
