@@ -9,7 +9,6 @@ admin.initializeApp({
 });
 const db = admin.database()
 ;
-/*
 (async () => {
   try{
     const browser = await puppeteer.launch({
@@ -88,31 +87,62 @@ const db = admin.database()
     } catch (error) {
       console.error('An error occurred:', error);
   }
-  
+  await processFirebaseData()
 })()
-*/
 
 //데이터 가공
 const processFirebaseData = async() => {
   try {
-      // Firebase에서 데이터 가져오기
-      const bandschedule = await db.ref('bandschedule').get();
-      const memberList = await db.ref('memberList').get();
-      const scheduleData = bandschedule.val();
-      const memberListData = memberList.val();
+    // Firebase에서 데이터 가져오기
+    const bandschedule = await db.ref('bandschedule').get()
+    const memberList = await db.ref('memberList').get()
+    const scheduleData = bandschedule.val()
+    const memberListData = memberList.val()
 
-      // 데이터 가공 및 수정 작업
-      console.log(scheduleData)
-      console.log(memberListData)
+    let modifiedMemberList = memberListData
 
-      // 수정된 데이터를 Firebase에 다시 저장
-      await db.ref('bandschedule').set(scheduleData);
-      await db.ref('memberList').set(memberListData);
-      console.log('Data processed and updated in Firebase.');
+    // 데이터 가공 및 수정 작업
+    let factoring = [{},{},{},{},{},{},{},{},{},{},{},{}]
+    let users = {}
+
+    //1차 가공 - 월별로 정리
+    Object.values(scheduleData).forEach((schedule, i) => {
+      schedule.forEach((list) => {
+        list.split(',').forEach((name) => {
+          let trimname = name.trim()
+          factoring[i][trimname] = (factoring[i][trimname] || 0) + 1
+        })
+      })
+    })
+
+    //2차 가공 - 유저별로 정리
+    factoring.forEach((month, i) => {
+      Object.entries(month).forEach(([name, count]) => {
+        if (!users[name]) {
+          users[name] = {}
+        }
+        users[name][(i+1) + 'month'] = count
+        users[name]['total'] = (users[name]['total'] || 0 ) + count
+      })
+    })
+
+    //최종 데이터 바인딩
+    for (let [id, userObj] of Object.entries(memberListData)){
+      for(let [month, count]  of Object.entries(users[userObj.name])){
+        if (!modifiedMemberList[id]) {
+          modifiedMemberList[id] = {}
+        }
+        modifiedMemberList[id][month] = count
+      }
+    }
+    
+    // 수정된 데이터를 Firebase에 다시 저장
+    await db.ref('memberList').set(modifiedMemberList)
+    console.log('Data processed and updated in Firebase.')
   } catch (error) {
-      console.error('An error occurred:', error);
+      console.error('An error occurred:', error)
   }
 }
 
 // 실행
-processFirebaseData();
+
