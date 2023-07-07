@@ -13,7 +13,7 @@ const db = admin.database();
   try{
   const browser = await puppeteer.launch({
       headless : false
-  });
+  })
 
   const page = await browser.newPage()
   const loginPage = 'https://auth.band.us/login_page?next_url=https%3A%2F%2Fband.us%2Fhome%3Freferrer%3Dhttps%253A%252F%252Fband.us%252F'
@@ -21,11 +21,22 @@ const db = admin.database();
   await page.goto(loginPage)
   console.log('Navigated to login page.')
 
+  const id = 'kinhyeonjin@naver.com'
+  const pw = 'theisland4!'
+
+  await page.click('#login_list > li:nth-child(4) > a')
+  
+  const emailSelector = "div#loginform div.clearfix._5466._44mg input[name='email']"
+  const passSelector = "div#loginform div.clearfix._5466._44mg input[name='pass']"
+  await page.waitForSelector(emailSelector)
+
+  await page.type(emailSelector, id)
+  await page.type(passSelector, pw)
+  await page.keyboard.press('Enter')
+  await page.waitForNavigation({ waitUntil: 'networkidle0' })
 
   // 로그인 처리
-  await page.waitForNavigation()
-  const waitForLogin = page.waitForSelector('#content > section > div.homeMyBandList.gMat20.gPab35._myBandListWrap > div > ul > li:nth-child(2)', { visible: true, timeout: 600000 })
-  await waitForLogin
+  await page.waitForSelector('#content > section > div.homeMyBandList.gMat20.gPab35._myBandListWrap > div > ul > li:nth-child(2)', { visible: true, timeout: 600000 })
 
   console.log('로그인 성공')
 
@@ -52,6 +63,7 @@ const db = admin.database();
   //우리가 원하는 그것!!
   let participants = []
   let hosts = []
+  let opportunity = {}
 
   //참석자
   const dataTarget = '#wrap > div.layerContainerView > div > section > div > div:nth-child(1) > div > div > div.scheduleMain > div.scheduleRsvpArea > ul > li:nth-child(1) > label:nth-child(2) > span > span'
@@ -77,6 +89,9 @@ const db = admin.database();
         await page.keyboard.press('Escape')
         continue // 해당 요소가 발견되지 않으면 다음 반복으로 건너뜀
       } 
+      
+      //벙 카운트 추가
+      opportunity[i] = (opportunity[i] || 0 ) + 1
 
       //참석자 명단 찾기
       const names = await page.evaluate((dataTarget) => {
@@ -145,6 +160,8 @@ const db = admin.database();
   } catch (error) {
     console.error('An error occurred:', error)
   }
+
+  //브라우저 닫기
 })()
 
 //데이터 가공
@@ -220,7 +237,7 @@ async function processFirebaseData () {
         if (!modifiedMemberList[id]) {
           modifiedMemberList[id] = {}
         }
-        modifiedMemberList[id][month] = count;
+        modifiedMemberList[id][month] = count
       }
     }
 
@@ -228,14 +245,14 @@ async function processFirebaseData () {
     for (let [id, userObj] of Object.entries(memberListData)){
       const currentUserData = usersHost[userObj.name]
       if (!currentUserData) { // users[userObj.name]이 존재하지 않는지 확인
-        continue; // 현재 반복 건너뛰고 다음 반복으로 넘어감
+        continue // 현재 반복 건너뛰고 다음 반복으로 넘어감
       }
       
       for(let [month, count] of Object.entries(currentUserData)) {
         if (!modifiedMemberList[id]) {
           modifiedMemberList[id] = {}
         }
-        modifiedMemberList[id][`${month}Host`] = count;
+        modifiedMemberList[id][`${month}Host`] = count
       }
     }
     
