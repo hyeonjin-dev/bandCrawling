@@ -1,5 +1,8 @@
 name: Run Puppeteer Script
-
+env:
+  ID: ${{ secrets.ID }}
+  PW: ${{ secrets.PW }}
+  
 on:
   schedule:
     - cron:  '0 0 * * *'
