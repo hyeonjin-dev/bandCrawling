@@ -12,7 +12,7 @@ const db = admin.database();
 (async () => {
   try{
   const browser = await puppeteer.launch({
-      headless : true
+      headless : 'new'
   })
 
   const page = await browser.newPage()
@@ -25,8 +25,8 @@ const db = admin.database();
   
   const emailSelector = "div#loginform div.clearfix._5466._44mg input[name='email']"
   const passSelector = "div#loginform div.clearfix._5466._44mg input[name='pass']"
-  await page.waitForSelector(emailSelector)
-
+  await page.waitForSelector(emailSelector,  { timeout: 60000 })
+  await page.screenshot({path: 'screenshot.png'})    
   await page.type(emailSelector, process.env.ID)
   await page.type(passSelector, process.env.PW)
   await page.keyboard.press('Enter')
