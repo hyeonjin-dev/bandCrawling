@@ -5,7 +5,7 @@ env:
   
 on:
   schedule:
-    - cron:  '15 20 * * *'
+    - cron:  '22 21 * * *'
 
 jobs:
   build:
