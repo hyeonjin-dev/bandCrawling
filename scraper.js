@@ -33,7 +33,7 @@ const db = admin.database();
   await page.waitForNavigation({ waitUntil: 'networkidle0' })
 
   // 로그인 처리
-  await page.waitForSelector('#content > section > div.homeMyBandList.gMat20.gPab35._myBandListWrap > div > ul > li:nth-child(2)', { visible: true, timeout: 600000 })
+  await page.waitForSelector('#content > section > div.homeMyBandList.gMat20.gPab35._myBandListWrap > div > ul > li:nth-child(2)', { visible: true, timeout: 10000 })
 
   console.log('로그인 성공')
 
