@@ -22,10 +22,12 @@ const db = admin.database();
   console.log('Navigated to login page.')
 
   await page.click('#login_list > li:nth-child(4) > a')
+  console.log('페북로그인 창 까지 옴ㅇㅇ')
   
   const emailSelector = "div#loginform div.clearfix._5466._44mg input[name='email']"
   const passSelector = "div#loginform div.clearfix._5466._44mg input[name='pass']"
   await page.screenshot({path: 'screenshot.png'})    
+  console.log('스샷찍음ㅇㅇ')
   await page.waitForTimeout(5000); // 5초 대기
   await page.waitForSelector(emailSelector,  { timeout: 60000 })
   await page.type(emailSelector, process.env.ID)
