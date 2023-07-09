@@ -25,3 +25,9 @@ jobs:
 
     - name: Run Puppeteer script
       run: node scraper.js
+      
+    - name: Upload screenshot
+      uses: actions/upload-artifact@v2
+      with:
+        name: screenshot
+        path: example.png
