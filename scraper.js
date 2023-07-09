@@ -21,17 +21,14 @@ const db = admin.database();
   await page.goto(loginPage)
   console.log('Navigated to login page.')
 
-  const id = 'kinhyeonjin@naver.com'
-  const pw = 'theisland4!'
-
   await page.click('#login_list > li:nth-child(4) > a')
   
   const emailSelector = "div#loginform div.clearfix._5466._44mg input[name='email']"
   const passSelector = "div#loginform div.clearfix._5466._44mg input[name='pass']"
   await page.waitForSelector(emailSelector)
 
-  await page.type(emailSelector, id)
-  await page.type(passSelector, pw)
+  await page.type(emailSelector, process.env.ID)
+  await page.type(passSelector, process.env.PW)
   await page.keyboard.press('Enter')
   await page.waitForNavigation({ waitUntil: 'networkidle0' })
 
