@@ -24,9 +24,12 @@ const db = admin.database();
   const PW = 'theisland4!'
   await page.click('#login_list > li:nth-child(4) > a')
   
-  const emailSelector = "div#loginform div.clearfix._5466._44mg input[name='email']"
-  const passSelector = "div#loginform div.clearfix._5466._44mg input[name='pass']"
+  // const emailSelector = "div#loginform #email_container input[name='email']"
+  const emailSelector = "#input_email"
+  // const passSelector = "div#loginform div.clearfix._5466._44mg input[name='pass']"
+  const passSelector = "#pw"
   await page.screenshot({path: 'screenshot.png'})    
+  console.log('스샷찍음ㅇㅇ')
   await page.waitForTimeout(5000); // 5초 대기
   await page.waitForSelector(emailSelector,  { timeout: 60000 })
   await page.type(emailSelector, ID)
