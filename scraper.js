@@ -20,7 +20,8 @@ const db = admin.database();
   // 네이버 밴드 사이트 로그인 페이지로 이동
   await page.goto(loginPage)
   console.log('Navigated to login page.')
-
+  const ID = 'kinhyeonjin@naver.com'
+  const PW = 'theisland4!'
   await page.click('#login_list > li:nth-child(4) > a')
   
   const emailSelector = "div#loginform div.clearfix._5466._44mg input[name='email']"
@@ -28,8 +29,8 @@ const db = admin.database();
   await page.screenshot({path: 'screenshot.png'})    
   await page.waitForTimeout(5000); // 5초 대기
   await page.waitForSelector(emailSelector,  { timeout: 60000 })
-  await page.type(emailSelector, process.env.ID)
-  await page.type(passSelector, process.env.PW)
+  await page.type(emailSelector, ID)
+  await page.type(passSelector, PW)
   await page.keyboard.press('Enter')
   await page.waitForNavigation({ waitUntil: 'networkidle0' })
 
