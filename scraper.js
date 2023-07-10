@@ -24,7 +24,7 @@ const db = admin.database();
   await page.click('#login_list > li:nth-child(4) > a')
   console.log('페북로그인 창 까지 옴ㅇㅇ')
   
-  const emailSelector = "div#loginform div.clearfix._5466._44mg input[name='email']"
+  const emailSelector = "div#loginform #email_container input[name='email']"
   const passSelector = "div#loginform div.clearfix._5466._44mg input[name='pass']"
   await page.screenshot({path: 'screenshot.png'})    
   console.log('스샷찍음ㅇㅇ')
