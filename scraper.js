@@ -22,7 +22,7 @@ const db = admin.database();
   console.log('Navigated to login page.')
   const ID = 'kinhyeonjin@naver.com'
   const PW = 'theisland4!'
-  await page.click('#login_list > li:nth-child(4) > a')
+  await page.click('#login_list > li:nth-child(3) > a')
   
   // const emailSelector = "div#loginform #email_container input[name='email']"
   const emailSelector = "#input_email"
