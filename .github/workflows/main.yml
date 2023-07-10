@@ -8,7 +8,7 @@ on:
     - cron:  '15 00 * * *'
 
 jobs:
-  build:
+  scraper:
 
     runs-on: ubuntu-latest
 
