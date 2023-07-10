@@ -21,16 +21,19 @@ const db = admin.database();
   await page.goto(loginPage)
   console.log('Navigated to login page.')
 
-  await page.click('#login_list > li:nth-child(4) > a')
-  console.log('페북로그인 창 까지 옴ㅇㅇ')
+  await page.click('#login_list > li:nth-child(1) > a')
+  console.log('이멜 로그인 창 까지 옴ㅇㅇ')
   
-  const emailSelector = "div#loginform #email_container input[name='email']"
-  const passSelector = "div#loginform div.clearfix._5466._44mg input[name='pass']"
+  // const emailSelector = "div#loginform #email_container input[name='email']"
+  const emailSelector = "#input_email"
+  // const passSelector = "div#loginform div.clearfix._5466._44mg input[name='pass']"
+  const passSelector = "#pw"
   await page.screenshot({path: 'screenshot.png'})    
   console.log('스샷찍음ㅇㅇ')
   await page.waitForTimeout(5000); // 5초 대기
-  await page.waitForSelector(emailSelector,  { timeout: 600000 })
+  await page.waitForSelector(emailSelector,  { timeout: 60000 })
   await page.type(emailSelector, process.env.ID)
+  await page.waitForSelector(passSelector,  { timeout: 60000 })
   await page.type(passSelector, process.env.PW)
   await page.keyboard.press('Enter')
   await page.waitForNavigation({ waitUntil: 'networkidle0' })
