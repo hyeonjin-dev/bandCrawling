@@ -20,7 +20,7 @@ const db = admin.database();
   // 네이버 밴드 사이트 로그인 페이지로 이동
   await page.goto(loginPage)
   console.log('Navigated to login page.')
-  await page.click('#login_list > li:nth-child(2) > a')
+  await page.click('#login_list > li:nth-child(3) > a')
   
   // const emailSelector = "div#loginform #email_container input[name='email']"
   const emailSelector = "#input_email"
