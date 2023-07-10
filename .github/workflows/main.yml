@@ -5,7 +5,7 @@ env:
   
 on:
   schedule:
-    - cron:  '00 04 * * *'
+    - cron:  '42 04 * * *'
 
 jobs:
   scraper:
