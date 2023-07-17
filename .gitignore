@@ -11,7 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
-serviceAccountKey.json
+*serviceAccountKey.json
 
 .env
 .env.production
