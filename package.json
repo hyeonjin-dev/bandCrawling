@@ -2,5 +2,9 @@
   "dependencies": {
     "chrome-aws-lambda": "^10.1.0",
     "firebase-admin": "^11.10.1"
+  },
+  "devDependencies": {
+    "webpack": "^5.88.1",
+    "webpack-cli": "^5.1.4"
   }
 }
