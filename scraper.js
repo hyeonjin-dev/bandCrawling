@@ -1,18 +1,28 @@
 const puppeteer = require('puppeteer')
 const admin = require('firebase-admin')
+const cron = require('node-cron');
+
+cron.schedule('0 0 * * *', async () => {
+  try{
+    await bandScrapping()
+  } catch (error) {
+    console.error('An error occurred:', error)
+  }
+})
 
 // Firebase 설정
 const serviceAccount = require('./serviceAccountKey.json')
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    databaseURL: "https://mlb-management-default-rtdb.firebaseio.com"
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://mlb-management-default-rtdb.firebaseio.com"
 })
 const db = admin.database();
 
-(async () => {
+const bandScrapping = async () => {
   try{
   const browser = await puppeteer.launch({
-      headless : 'new'
+    headless : 'new'
+    // headless: false
   })
 
   const page = await browser.newPage()
@@ -24,13 +34,10 @@ const db = admin.database();
   const PW = 'theisland4!'
   await page.click('#login_list > li:nth-child(4) > a')
   
-  // const emailSelector = "div#loginform #email_container input[name='email']"
-  const emailSelector = "#input_email"
-  // const passSelector = "div#loginform div.clearfix._5466._44mg input[name='pass']"
-  const passSelector = "#pw"
-  await page.screenshot({path: 'screenshot.png'})    
-  console.log('스샷찍음ㅇㅇ')
-  await page.waitForTimeout(5000); // 5초 대기
+  const emailSelector = "div#loginform #email_container input[name='email']"
+  // const emailSelector = "#input_email"
+  const passSelector = "div#loginform div.clearfix._5466._44mg input[name='pass']"
+  // const passSelector = "#pw"
   await page.waitForSelector(emailSelector,  { timeout: 60000 })
   await page.type(emailSelector, ID)
   await page.type(passSelector, PW)
@@ -46,7 +53,7 @@ const db = admin.database();
   await Promise.all([
     page.waitForNavigation(),
     page.goto('https://band.us/band/77309128/calendar')
-  ]);
+  ])
   console.log('Navigated to calendar page.')
 
   //이번달 확인
@@ -164,7 +171,7 @@ const db = admin.database();
   }
 
   //브라우저 닫기
-})()
+}
 
 //데이터 가공
 async function processFirebaseData () {
@@ -264,7 +271,7 @@ async function processFirebaseData () {
     await db.ref('backup').set(memberListData)
     console.log('Data processed and updated in Firebase.')
   } catch (error) {
-      console.error('An error occurred:', error)
+    console.error('An error occurred:', error)
   }
 }
 
