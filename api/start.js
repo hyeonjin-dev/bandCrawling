@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer')
 const admin = require('firebase-admin')
 
 // Firebase 설정
-const serviceAccount = require('./serviceAccountKey.json')
+const serviceAccount = require('../serviceAccountKey.json')
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
     databaseURL: "https://mlb-management-default-rtdb.firebaseio.com"
@@ -287,7 +287,7 @@ async function processFirebaseData () {
     await db.ref('backup').set(memberListData)
     console.log('Data processed and updated in Firebase.')
   } catch (error) {
-      console.error('An error occurred:', error)
+    console.error('An error occurred:', error)
   }
 }
 
