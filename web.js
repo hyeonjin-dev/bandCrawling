@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer')
 const admin = require('firebase-admin')
 const cron = require('node-cron');
 
-cron.schedule('0 21 * * *', async () => {
+cron.schedule('00 09 * * *', async () => {
   try{
     await bandScrapping()
   } catch (error) {
@@ -16,13 +16,12 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://mlb-management-default-rtdb.firebaseio.com"
 })
-const db = admin.database();
-
+const db = admin.database()
 const bandScrapping = async () => {
   try{
   const browser = await puppeteer.launch({
-    headless : 'new'
-    // headless: false
+    // headless : 'new'
+    headless: false
   })
 
   const page = await browser.newPage()
@@ -168,6 +167,8 @@ const bandScrapping = async () => {
   await processFirebaseData()
   } catch (error) {
     console.error('An error occurred:', error)
+    const ref = db.ref(`error`)
+    await ref.set(error)
   }
 
   //브라우저 닫기
@@ -275,3 +276,4 @@ async function processFirebaseData () {
   }
 }
 
+bandScrapping()
