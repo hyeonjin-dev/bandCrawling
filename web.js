@@ -60,7 +60,8 @@ const bandScrapping = async () => {
   let month = date.getMonth() + 1
 
   //월간 반복
-  for(month; month >= 1; month--){
+  // for(month; month >= 1; month--){
+  
   await page.waitForSelector('#content > section > div.scheduleList.gContentCardShadow > ul > li > span > a')
   const modals = await page.evaluate(() => {
     const anchors = Array.from(document.querySelectorAll('#content > section > div.scheduleList.gContentCardShadow > ul > li'))
@@ -158,9 +159,11 @@ const bandScrapping = async () => {
   const refHost = db.ref(`hostList/${month}month`)
   await refHost.set(hosts)
   console.log(`Data for schedule_${month} saved to Firebase.`)
-  participants = [] // 다음 일정을 위해 참가자 배열 초기화
-  await page.click(`#content > section > div.calendarViewWrap.gContentCardShadow > div:nth-child(1) > div.calendarHeader > div.month > button.prev._btnPrev`)
-  }
+
+  //아래쪽은 월간 반복을 위한 코드
+  //participants = [] // 다음 일정을 위해 참가자 배열 초기화
+  //await page.click(`#content > section > div.calendarViewWrap.gContentCardShadow > div:nth-child(1) > div.calendarHeader > div.month > button.prev._btnPrev`)
+ // }
 
 
   //데이터 가공
@@ -186,7 +189,6 @@ async function processFirebaseData () {
     const hostListData = hostList.val()
 
     let modifiedMemberList = memberListData
-
     // 데이터 가공 및 수정 작업
     let factoring = [{},{},{},{},{},{},{},{},{},{},{},{}]
     let factoringHost = [{},{},{},{},{},{},{},{},{},{},{},{}]
@@ -235,11 +237,15 @@ async function processFirebaseData () {
       })
     })
 
+    // 이번달 확인
+    const date = new Date()
+    const currentMonth = date.getMonth() + 1
+
     //최종 데이터 바인딩
     //벙 참여
     for (let [id, userObj] of Object.entries(memberListData)){
       const currentUserData = users[userObj.name]
-      if (!currentUserData) { // users[userObj.name]이 존재하지 않는지 확인
+      if (!currentUserData) { // users[userObj.name]이 존재하지 않는지 확인 (현재 남아있는 회원인지)
         continue; // 현재 반복 건너뛰고 다음 반복으로 넘어감
       }
       
@@ -249,12 +255,17 @@ async function processFirebaseData () {
         }
         modifiedMemberList[id][month] = count
       }
+      if(!modifiedMemberList[id][`${currentMonth}month`] && !modifiedMemberList[id][`${currentMonth - 1}month`]){
+        modifiedMemberList[id]['danger'] = true
+      }else{
+        modifiedMemberList[id]['danger'] = false
+      }
     }
 
     //벙 개설
     for (let [id, userObj] of Object.entries(memberListData)){
       const currentUserData = usersHost[userObj.name]
-      if (!currentUserData) { // users[userObj.name]이 존재하지 않는지 확인
+      if (!currentUserData) { // users[userObj.name]이 존재하지 않는지 확인 (현재 남아있는 회원인지)
         continue // 현재 반복 건너뛰고 다음 반복으로 넘어감
       }
       
@@ -265,7 +276,6 @@ async function processFirebaseData () {
         modifiedMemberList[id][`${month}Host`] = count
       }
     }
-    
     // 수정된 데이터를 Firebase에 다시 저장
     await db.ref('memberList').set(modifiedMemberList)
     // 백업 보관
@@ -277,3 +287,4 @@ async function processFirebaseData () {
 }
 
 bandScrapping()
+// processFirebaseData()
