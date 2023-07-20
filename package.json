@@ -15,9 +15,5 @@
     "firebase-admin": "^11.9.0",
     "node-cron": "^3.0.2",
     "puppeteer": "^20.7.3"
-  },
-  "devDependencies": {
-    "webpack": "^5.88.1",
-    "webpack-cli": "^5.1.4"
   }
 }
