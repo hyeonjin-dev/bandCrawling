@@ -184,9 +184,11 @@ async function processFirebaseData () {
     const bandschedule = await db.ref('bandschedule').get()
     const memberList = await db.ref('memberList').get()
     const hostList = await db.ref('hostList').get()
+    const halloffame = await db.ref('halloffame').get()
     const scheduleData = bandschedule.val()
     const memberListData = memberList.val()
     const hostListData = hostList.val()
+    const hofData = halloffame.val()
 
     let modifiedMemberList = memberListData
     // 데이터 가공 및 수정 작업
@@ -237,12 +239,49 @@ async function processFirebaseData () {
       })
     })
 
+
     // 이번달 확인
     const date = new Date()
     const currentYear = date.getFullYear()
     const currentMonth = date.getMonth() + 1
 
     //최종 데이터 바인딩
+    //hof 정보 가공
+    function parseText(input) {
+      // Remove all text within parentheses
+      const noParentheses = input.replace(/\(.*?\)/g, '')
+    
+      // Split by comma or ampersand, trimming any extra whitespace
+      const segments = noParentheses.split(/\s*[,&]\s*/)
+    
+      return segments
+    }
+    
+    let userHof = {}
+
+    Object.values(hofData).forEach(award => {
+      if(award.fClass) {
+        parseText(award.fClass).forEach(name => {
+          userHof[name] = (userHof[name] || 0) + 1
+        })
+      }
+      if(award.sClass) {
+        parseText(award.sClass).forEach(name => {
+          userHof[name] = (userHof[name] || 0) + 1
+        })
+      }
+      if(award.tClass) {
+        parseText(award.tClass).forEach(name => {
+          userHof[name] = (userHof[name] || 0) + 1
+        })
+      }
+      if(award.anotherClass) {
+        parseText(award.anotherClass).forEach(name => {
+          userHof[name] = (userHof[name] || 0) + 1
+        })
+      }
+    })
+    
     //벙 참여
     for (let [id, userObj] of Object.entries(memberListData)){
       const currentUserData = users[userObj.name]
@@ -288,6 +327,16 @@ async function processFirebaseData () {
         modifiedMemberList[id][`${month}Host`] = count
       }
     }
+
+    //hof정보 갱신
+    for (let [id, userObj] of Object.entries(memberListData)){
+      const currentUserData = userHof[userObj.name]
+      if (!currentUserData) { // users[userObj.name]이 존재하지 않는지 확인 (현재 남아있는 회원인지)
+        continue // 현재 반복 건너뛰고 다음 반복으로 넘어감
+      }
+      modifiedMemberList[id][`awardCount`] = currentUserData
+    }
+
     // 수정된 데이터를 Firebase에 다시 저장
     await db.ref('memberList').set(modifiedMemberList)
     // 백업 보관
