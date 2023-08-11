@@ -3,9 +3,9 @@ env:
   ID: ${{ secrets.ID }}
   PW: ${{ secrets.PW }}
   
-on:
-  schedule:
-    - cron:  '44 16 * * *'
+# on:
+#   schedule:
+#     - cron:  '44 16 * * *'
 
 jobs:
   scraper:
