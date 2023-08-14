@@ -1,14 +1,5 @@
 const puppeteer = require('puppeteer')
 const admin = require('firebase-admin')
-const cron = require('node-cron');
-
-cron.schedule('00 09 * * *', async () => {
-  try{
-    await bandScrapping()
-  } catch (error) {
-    console.error('An error occurred:', error)
-  }
-})
 
 // Firebase 설정
 const serviceAccount = require('./serviceAccountKey.json')
@@ -21,7 +12,10 @@ const bandScrapping = async () => {
   try{
   const browser = await puppeteer.launch({
     // headless : 'new'
-    headless: false
+    headless: false,
+    args: [
+      `--proxy-server=http://14.37.69.97:3128`,
+    ]
   })
 
   const page = await browser.newPage()
