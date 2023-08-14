@@ -341,5 +341,5 @@ async function processFirebaseData () {
   }
 }
 
-// bandScrapping()
-processFirebaseData()
+bandScrapping()
+// processFirebaseData()
