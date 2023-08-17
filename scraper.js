@@ -12,7 +12,7 @@ const bandScrapping = async () => {
   try{
   const browser = await puppeteer.launch({
     // headless : 'new'
-    headless: false,
+    headless: true,
     args: [
       `--proxy-server=http://14.37.69.97:3128`,
     ]
